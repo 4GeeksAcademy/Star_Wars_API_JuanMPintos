@@ -1,5 +1,4 @@
-from flask_sqlalchemy import ForeignKey, SQLAlchemy
-from flask_sqlalchemy.orm import relationship
+from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
@@ -9,26 +8,26 @@ class User(db.Model):
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
 
-    relation_favoritos = relationship('Favoritos'); backref='user'
+    relation_favoritos = db.relationship('Favoritos', backref='user')
 
 class Personajes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
     lightsaber_user = db.Column(db.Boolean(),unique=False, nullable=False)
 
-    relation_favoritos = relationship('Favoritos'); backref='personajes'
+    relation_favoritos = db.relationship('Favoritos', backref='personajes')
 
 
 class Planetas(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
 
-    relation_favoritos = relationship('Favoritos'); backref='planetas'
+    relation_favoritos = db.relationship('Favoritos', backref='planetas')
 
 class Favoritos(db.Model):
-    id = db.Column(db.Integer, ForeignKey('user.id'), primary_key=True)
-    planeta_favorito = db.Column(db.String(30), ForeignKey('planetas.name'))
-    personaje_favorito = db.Column(db.String(30), ForeignKey('personajes.name'))
+    id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    planeta_favorito = db.Column(db.String(30), db.ForeignKey('planetas.name'))
+    personaje_favorito = db.Column(db.String(30), db.ForeignKey('personajes.name'))
  
 
     def __repr__(self):
