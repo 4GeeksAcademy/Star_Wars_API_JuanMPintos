@@ -10,26 +10,6 @@ class User(db.Model):
 
     relation_favoritos = db.relationship('Favoritos', backref='user')
 
-class Personajes(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(30))
-    lightsaber_user = db.Column(db.Boolean(),unique=False, nullable=False)
-
-    relation_favoritos = db.relationship('Favoritos', backref='personajes')
-
-
-class Planetas(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20))
-
-    relation_favoritos = db.relationship('Favoritos', backref='planetas')
-
-class Favoritos(db.Model):
-    id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-    planeta_favorito = db.Column(db.String(30), db.ForeignKey('planetas.name'))
-    personaje_favorito = db.Column(db.String(30), db.ForeignKey('personajes.name'))
- 
-
     def __repr__(self):
         return '<User %r>' % self.username
 
@@ -37,5 +17,54 @@ class Favoritos(db.Model):
         return {
             "id": self.id,
             "email": self.email,
-            # do not serialize the password, its a security breach
         }
+
+class Personajes(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(30))
+    lightsaber_user = db.Column(db.Boolean(),unique=False, nullable=False)
+
+    relation_favoritos = db.relationship('Favoritos', backref='personajes')
+
+    def __repr__(self):
+        return '<Personajes %r>' % self.username
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "lightsaber_user": self.lightsaber_user
+        }
+
+class Planetas(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20))
+
+    relation_favoritos = db.relationship('Favoritos', backref='planetas')
+
+    def __repr__(self):
+        return '<Planetas %r>' % self.username
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+        }
+
+class Favoritos(db.Model):
+    id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    planeta_favorito = db.Column(db.String(30), db.ForeignKey('planetas.name'))
+    personaje_favorito = db.Column(db.String(30), db.ForeignKey('personajes.name'))
+ 
+    def __repr__(self):
+        return '<Personajes %r>' % self.username
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "planeta_favorito": self.planeta_favorito,
+            "personaje_favorito": self.personaje_favorito
+        }
+    
+    
+    

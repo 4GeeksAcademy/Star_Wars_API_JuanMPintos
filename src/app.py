@@ -37,8 +37,6 @@ def sitemap():
     return generate_sitemap(app)
 
 
-
-
 #OBTENGO TODOS LOS PERSONAJES
 @app.route("/personajes", methods=['GET'])
 def personajes_list():
@@ -101,8 +99,18 @@ def agregar_planeta(id):
 
 @app.route("/favoritos/personajes/<int:id>", methods=['POST'])
 def agregar_personaje(id):
+    personaje = Personajes.query.get(id)
+    if not personaje:
+        return jsonify({"error": "Personaje no encontrado"}), 400
+    
+    favorito_existente = Favoritos.query.filter_by(personaje_id=id).first()
+    if favorito_existente:
+        return jsonify({"error": "El personaje ya está en la lista de favoritos"}), 400
+    nuevo_favorito = Favoritos(personaje_id=id)
 
-
+    db.session.add(nuevo_favorito)
+    db.session.commit()
+    return jsonify({"message": f"El personaje {personaje.nombre} ha sido añadido a tus favoritos."}), 200
 
 
 #ELIMINAR 1 PLANETA DE FAVORITOS
