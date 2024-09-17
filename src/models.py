@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 class User(db.Model):
+    __tablename__ = 'user' 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
@@ -20,6 +21,7 @@ class User(db.Model):
         }
 
 class Personajes(db.Model):
+    __tablename__ = 'personajes' 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), nullable=False)
     lightsaber_user = db.Column(db.Boolean(), unique=False, nullable=False)
@@ -37,6 +39,7 @@ class Personajes(db.Model):
         }
 
 class Planetas(db.Model):
+    __tablename__ = 'planetas' 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), nullable=False)
 
@@ -52,6 +55,7 @@ class Planetas(db.Model):
         }
 
 class Favoritos(db.Model):
+    __tablename__ = 'favoritos' 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     planeta_id = db.Column(db.Integer, db.ForeignKey('planetas.id'))
