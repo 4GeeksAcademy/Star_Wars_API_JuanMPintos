@@ -47,8 +47,10 @@ def personajes_list():
 #OBTENGO 1 PERSONAJE
 @app.route("/personajes/<int:id>", methods=['GET'])
 def personaje(id):
-    personaje= Personajes.query.get(id)
-    return jsonify(personaje), 200
+    personaje = Personajes.query.get(id)
+    if not personaje:
+        return jsonify({"error": "Personaje no encontrado"}), 404
+    return jsonify(personaje.serialize()), 200
 
 #OBTENER PLANETAS
 @app.route("/planetas", methods=['GET'])
@@ -60,8 +62,10 @@ def planetas_list():
 #OBTENGO 1 PLANETA
 @app.route("/planetas/<int:id>", methods=['GET'])
 def planeta(id):
-    planeta= Planetas.query.get(id)
-    return jsonify(planeta), 200
+    planeta = Planetas.query.get(id)
+    if not planeta:
+        return jsonify({"error": "Planeta no encontrado"}), 404
+    return jsonify(planeta.serialize()), 200
 
 #OBTENGO TODOS LOS USERS
 @app.route("/users", methods=['GET'])
@@ -73,9 +77,10 @@ def users_list():
 #OBTENGO 1 USER
 @app.route("/users/<int:id>", methods=['GET'])
 def user_list(id):
-    user= User.query.get(id)
-    one_users=list(map(lambda x: x.serialize(), user))
-    return jsonify(one_users), 200
+    user = User.query.get(id)
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    return jsonify(user.serialize()), 200
 
 
 # AGREGAR UN PLANETA A FAVORITOS
@@ -83,48 +88,58 @@ def user_list(id):
 def agregar_planeta(id):
     planeta = Planetas.query.get(id)
     if not planeta:
-        return jsonify({"error": "Planeta no encontrado"}), 400
+        return jsonify({"error": "Planeta no encontrado"}), 404
     
-    favorito_existente = Favoritos.query.filter_by(planet_id=id).first()
+    favorito_existente = Favoritos.query.filter_by(planeta_id=id).first()
     if favorito_existente:
         return jsonify({"error": "El planeta ya está en la lista de favoritos"}), 400
+    
     nuevo_favorito = Favoritos(planet_id=id)
-
     db.session.add(nuevo_favorito)
     db.session.commit()
-    return jsonify({"message": f"El planeta {planeta.nombre} ha sido añadido a tus favoritos."}), 200
+    
+    return jsonify({"message": f"El planeta {planeta.name} ha sido añadido a tus favoritos."}), 200
 
 # AGREGAR 1 PERSONAJE A FAVORITOS
 @app.route("/favoritos/personajes/<int:id>", methods=['POST'])
 def agregar_personaje(id):
     personaje = Personajes.query.get(id)
     if not personaje:
-        return jsonify({"error": "Personaje no encontrado"}), 400
+        return jsonify({"error": "Personaje no encontrado"}), 404
     
     favorito_existente = Favoritos.query.filter_by(personaje_id=id).first()
     if favorito_existente:
         return jsonify({"error": "El personaje ya está en la lista de favoritos"}), 400
+    
     nuevo_favorito = Favoritos(personaje_id=id)
-
     db.session.add(nuevo_favorito)
     db.session.commit()
-    return jsonify({"message": f"El personaje {personaje.nombre} ha sido añadido a tus favoritos."}), 200
+    
+    return jsonify({"message": f"El personaje {personaje.name} ha sido añadido a tus favoritos."}), 200
 
 
 #ELIMINAR 1 PLANETA DE FAVORITOS
 @app.route("/favoritos/planetas/<int:id>", methods=['DELETE'])
 def eliminar_planeta(id):
-    planeta = Planetas.query.get(id)
-    db.session.delete(planeta)
+    favorito = Favoritos.query.filter_by(planet_id=id).first()
+    if not favorito:
+        return jsonify({"error": "El favorito no existe"}), 404
+    
+    db.session.delete(favorito)
     db.session.commit()
+    return jsonify({"message": "El planeta ha sido eliminado de favoritos."}), 200
 
 
 #ELIMINAR 1 PERSONAJE DE FAVORITOS
 @app.route("/favoritos/personajes/<int:id>", methods=['DELETE'])
 def eliminar_personaje(id):
-    personaje = Personajes.query.get(id)
-    db.session.delete(personaje)
+    favorito = Favoritos.query.filter_by(personaje_id=id).first()
+    if not favorito:
+        return jsonify({"error": "El favorito no existe"}), 404
+    
+    db.session.delete(favorito)
     db.session.commit()
+    return jsonify({"message": "El personaje ha sido eliminado de favoritos."}), 200
 
 #OBTENER FAVORITOS
 @app.route("/favoritos", methods=['GET'])
