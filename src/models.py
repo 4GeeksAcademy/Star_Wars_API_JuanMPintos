@@ -57,7 +57,7 @@ class Favoritos(db.Model):
     personaje_favorito = db.Column(db.String(30), db.ForeignKey('personajes.name'))
  
     def __repr__(self):
-        return '<Personajes %r>' % self.username
+        return '<Favoritos %r>' % self.username
 
     def serialize(self):
         return {

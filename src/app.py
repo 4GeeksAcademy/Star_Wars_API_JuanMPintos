@@ -71,7 +71,7 @@ def users_list():
     return jsonify(all_users), 200
 
 #OBTENGO 1 USER
-@app.route("/users/<int:id>", method=['GET'])
+@app.route("/users/<int:id>", methods=['GET'])
 def user_list(id):
     user= User.query.get(id)
     one_users=list(map(lambda x: x.serialize(), user))
@@ -79,7 +79,6 @@ def user_list(id):
 
 
 # AGREGAR UN PLANETA A FAVORITOS
-
 @app.route("/favoritos/planetas/<int:id>", methods=['POST'])
 def agregar_planeta(id):
     planeta = Planetas.query.get(id)
@@ -96,7 +95,6 @@ def agregar_planeta(id):
     return jsonify({"message": f"El planeta {planeta.nombre} ha sido añadido a tus favoritos."}), 200
 
 # AGREGAR 1 PERSONAJE A FAVORITOS
-
 @app.route("/favoritos/personajes/<int:id>", methods=['POST'])
 def agregar_personaje(id):
     personaje = Personajes.query.get(id)
@@ -114,7 +112,6 @@ def agregar_personaje(id):
 
 
 #ELIMINAR 1 PLANETA DE FAVORITOS
-
 @app.route("/favoritos/planetas/<int:id>", methods=['DELETE'])
 def eliminar_planeta(id):
     planeta = Planetas.query.get(id)
@@ -123,7 +120,6 @@ def eliminar_planeta(id):
 
 
 #ELIMINAR 1 PERSONAJE DE FAVORITOS
-
 @app.route("/favoritos/personajes/<int:id>", methods=['DELETE'])
 def eliminar_personaje(id):
     personaje = Personajes.query.get(id)
@@ -131,7 +127,7 @@ def eliminar_personaje(id):
     db.session.commit()
 
 #OBTENER FAVORITOS
-@app.route("/favoritos", method=['GET'])
+@app.route("/favoritos", methods=['GET'])
 def favoritos_list():
     favoritos= Favoritos.query.all()
     all_favoritos=list(map(lambda x: x.serialize(), favoritos))
