@@ -83,22 +83,23 @@ def user_list(id):
     return jsonify(user.serialize()), 200
 
 
-# AGREGAR UN PLANETA A FAVORITOS
-# @app.route("/user/<int:user_id>/favoritos/planetas/<int:id>", methods=['POST'])
-# def agregar_planeta(user_id, id):
-#     planeta = Planetas.query.get(id)
-#     if not planeta:
-#         return jsonify({"error": "Planeta no encontrado"}), 404
+#AGREGAR UN PLANETA A FAVORITOS
+
+@app.route("/user/<int:user_id>/favoritos/planetas/<int:id>", methods=['POST'])
+def agregar_planeta(user_id, id):
+    planeta = Planetas.query.get(id)
+    if not planeta:
+        return jsonify({"error": "Planeta no encontrado"}), 404
     
-#     favorito_existente = Favoritos.query.filter_by(planeta_id=id, user_id=user_id).first()
-#     if favorito_existente:
-#         return jsonify({"error": "El planeta ya está en la lista de favoritos"}), 400
+    favorito_existente = Planetas_favoritos.query.filter_by(planeta_id=id, user_id=user_id).first()
+    if favorito_existente:
+        return jsonify({"error": "El planeta ya está en la lista de favoritos"}), 400
     
-#     nuevo_favorito = Favoritos(planet_id=id, user_id=user_id)
-#     db.session.add(nuevo_favorito)
-#     db.session.commit()
+    nuevo_favorito = Planetas_favoritos(planet_id=id, user_id=user_id)
+    db.session.add(nuevo_favorito)
+    db.session.commit()
     
-#     return jsonify({"message": f"El planeta {planeta.name} ha sido añadido a tus favoritos."}), 200
+    return jsonify({"message": f"El planeta {planeta.name} ha sido añadido a tus favoritos."}), 200
 
 # AGREGAR 1 PERSONAJE A FAVORITOS
 @app.route("/users/<int:user_id>/favoritos/personajes/<int:id>", methods=['POST'])
@@ -119,34 +120,29 @@ def agregar_personaje(user_id, id):
 
 
 #ELIMINAR 1 PLANETA DE FAVORITOS
-# @app.route("/favoritos/planetas/<int:id>", methods=['DELETE'])
-# def eliminar_planeta(id):
-#     favorito = Favoritos.query.filter_by(planet_id=id).first()
-#     if not favorito:
-#         return jsonify({"error": "El favorito no existe"}), 404
+
+@app.route("/users/<int:user_id>/favoritos/planetas/<int:id>", methods=['DELETE'])
+def eliminar_planeta(id):
+    favorito = Planetas_favoritos.query.filter_by(planet_id=id).first()
+    if not favorito:
+        return jsonify({"error": "El favorito no existe"}), 404
     
-#     db.session.delete(favorito)
-#     db.session.commit()
-#     return jsonify({"message": "El planeta ha sido eliminado de favoritos."}), 200
+    db.session.delete(favorito)
+    db.session.commit()
+    return jsonify({"message": "El planeta ha sido eliminado de favoritos."}), 200
 
 
-#ELIMINAR 1 PERSONAJE DE FAVORITOS
-# @app.route("/favoritos/personajes/<int:id>", methods=['DELETE'])
-# def eliminar_personaje(id):
-#     favorito = Favoritos.query.filter_by(personaje_id=id).first()
-#     if not favorito:
-#         return jsonify({"error": "El favorito no existe"}), 404
+ #ELIMINAR 1 PERSONAJE DE FAVORITOS
+
+@app.route("/users/<int:user_id>/favoritos/personajes/<int:id>", methods=['DELETE'])
+def eliminar_personaje(id):
+    favorito = Personajes_favoritos.query.filter_by(personaje_id=id).first()
+    if not favorito:
+        return jsonify({"error": "El favorito no existe"}), 404
     
-#     db.session.delete(favorito)
-#     db.session.commit()
-#     return jsonify({"message": "El personaje ha sido eliminado de favoritos."}), 200
-
-#OBTENER FAVORITOS
-@app.route("/users/<int:user_id>/favoritos", methods=['GET'])
-def favoritos_list(user_id):
-    favoritos= Personajes_favoritos.query.filter_by(user_id).all()
-    all_favoritos=list(map(lambda x: x.serialize(), favoritos))
-    return jsonify(all_favoritos), 200
+    db.session.delete(favorito)
+    db.session.commit()
+    return jsonify({"message": "El personaje ha sido eliminado de favoritos."}), 200
 
 
 # this only runs if `$ python src/app.py` is executed

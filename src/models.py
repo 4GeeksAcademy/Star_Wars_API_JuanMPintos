@@ -27,7 +27,7 @@ class Personajes(db.Model):
     name = db.Column(db.String(30), nullable=False)
     lightsaber_user = db.Column(db.Boolean(), nullable=False)
 
-    personajes_favoritos = db.relationship('Personajes_favoritos', backref='personaje')
+    personajes_favoritos = db.relationship('Personajes_favoritos', backref='personajes')
 
     def __repr__(self):
         return '<Personajes %r>' % self.name
