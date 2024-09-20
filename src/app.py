@@ -82,6 +82,22 @@ def user_list(id):
         return jsonify({"error": "Usuario no encontrado"}), 400
     return jsonify(user.serialize()), 200
 
+#OBTENGO PLANETAS FAVORITOS
+
+@app.route("/users/planetas_favoritos", methods=['GET'])
+def obtener_planetas_favoritos():
+    planetas_favoritos= Planetas_favoritos.query.all()
+    all_planetas=list(map(lambda x: x.serialize(), planetas_favoritos))
+    return jsonify(all_planetas), 200
+
+#OBTENER PERSONAJES FAVORITOS
+
+@app.route("/users/personajes_favoritos", methods=['GET'])
+def obtener_personajes_favoritos():
+    personajes_favoritos= Personajes_favoritos.query.all()
+    all_personajes=list(map(lambda x: x.serialize(), personajes_favoritos))
+    return jsonify(all_personajes), 200
+
 
 #AGREGAR UN PLANETA A FAVORITOS
 
@@ -95,7 +111,7 @@ def agregar_planeta(user_id, id):
     if favorito_existente:
         return jsonify({"error": "El planeta ya está en la lista de favoritos"}), 400
     
-    nuevo_favorito = Planetas_favoritos(planet_id=id, user_id=user_id)
+    nuevo_favorito = Planetas_favoritos(planeta_id=id, user_id=user_id)
     db.session.add(nuevo_favorito)
     db.session.commit()
     
@@ -143,6 +159,9 @@ def eliminar_personaje(id):
     db.session.delete(favorito)
     db.session.commit()
     return jsonify({"message": "El personaje ha sido eliminado de favoritos."}), 200
+
+
+
 
 
 # this only runs if `$ python src/app.py` is executed
